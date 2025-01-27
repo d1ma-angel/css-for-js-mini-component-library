@@ -6,89 +6,75 @@ import { COLORS } from '../../constants';
 import VisuallyHidden from '../VisuallyHidden';
 
 const ProgressBar = ({ value, size }) => {
+  const style = STYLES[size];
+
+  if (!style) {
+    throw new Error(`Unknown size passed to ProgressBar: ${size}`);
+  }
+
   return (
     <>
-      <VisuallyHidden>
-        <label>Loading...</label>
-      </VisuallyHidden>
-      <ProgressWrapper value={value} size={size} max={100} />
+      <Wrapper
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin="0"
+        aria-valuemax="100"
+        style={{
+          '--padding': style.padding + 'px',
+          '--border-radius': style.radius + 'px',
+        }}
+      >
+        <VisuallyHidden>{value}%</VisuallyHidden>
+        <BarWrapper>
+          <Bar
+            style={{
+              '--width': value + '%',
+              '--height': style.height + 'px',
+            }}
+          />
+        </BarWrapper>
+      </Wrapper>
     </>
   );
 };
 
-const borderRadius = {
-  large: '8px',
-  medium: '4px',
-  small: '4px',
+const STYLES = {
+  small: {
+    height: 8,
+    padding: 0,
+    radius: 4,
+  },
+  medium: {
+    height: 12,
+    padding: 0,
+    radius: 4,
+  },
+  large: {
+    height: 24,
+    padding: 4,
+    radius: 8,
+  },
 };
 
-const sizeStyles = (size) =>
-  ({
-    large: css`
-      padding: 4px;
-      height: 24px;
-    `,
-    medium: css``,
-    small: css`
-      height: 8px;
-    `,
-  }[size]);
-
-const statusStyles = (inProgress) => {
-  if (inProgress) {
-    return css`
-      &::-webkit-progress-value {
-        border-radius: 4px 0 0 4px;
-      }
-
-      &::-moz-progress-bar {
-        border-radius: 4px 0 0 4px;
-      }
-    `;
-  } else {
-    return css`
-      &::-webkit-progress-value {
-        border-radius: 4px;
-      }
-
-      &::-moz-progress-bar {
-        border-radius: 4px;
-      }
-    `;
-  }
-};
-
-const ProgressWrapper = styled.progress.attrs(({ value, max }) => ({
-  'aria-busy': value < max ? 'true' : 'false',
-  'aria-valuenow': value,
-  value: value,
-  max: max,
-}))`
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
-  height: 12px;
-  border: none;
-  border-radius: ${({ size }) => borderRadius[size]};
+const Wrapper = styled.div`
+  border-radius: var(--border-radius);
+  padding: var(--padding);
   background-color: ${COLORS.transparentGray15};
   box-shadow: inset 0px 2px 4px ${COLORS.transparentGray35};
+`;
 
-  &::-webkit-progress-bar {
-    background-color: transparent;
-    border-radius: 4px;
-  }
+const Bar = styled.div`
+  height: var(--height);
+  width: var(--width);
+  background-color: ${COLORS.primary};
+  border-radius: 4px 0 0 4px;
+`;
 
-  &::-webkit-progress-value {
-    background-color: ${COLORS.primary};
-  }
+const BarWrapper = styled.div`
+  border-radius: 4px;
 
-  &::-moz-progress-bar {
-    background-color: ${COLORS.primary};
-  }
-
-  ${({ value, max, size }) => statusStyles(value < max, size)}
-  ${({ size }) => sizeStyles(size)}
+  /* Trim off corners when progress bar is near-full. */
+  overflow: hidden;
 `;
 
 export default ProgressBar;
