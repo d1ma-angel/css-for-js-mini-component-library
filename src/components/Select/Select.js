@@ -4,69 +4,68 @@ import styled from 'styled-components';
 import { COLORS } from '../../constants';
 import Icon from '../Icon';
 import { getDisplayedValue } from './Select.helpers';
-import VisuallyHidden from '../VisuallyHidden';
 
-const Select = ({ label, value, onChange, children }) => {
+const Select = ({ id, value, onChange, children }) => {
   const displayedValue = getDisplayedValue(value, children);
 
   return (
-    <>
-      <VisuallyHidden>
-        <label>{label}</label>
-      </VisuallyHidden>
-      <Wrapper displayedValue={displayedValue}>
-        <NativeSelectWrapper value={value} onChange={onChange}>
-          {children}
-        </NativeSelectWrapper>
-        <IconWrapper>
-          <Icon id="chevron-down" size={24} strokeWidth={1} />
+    <Wrapper>
+      <NativeSelect id={id} value={value} onChange={onChange}>
+        {children}
+      </NativeSelect>
+      <PresentationalBit>
+        {displayedValue}
+        <IconWrapper style={{ '--size': 24 + 'px' }}>
+          <Icon id="chevron-down" strokeWidth={1} size={24} />
         </IconWrapper>
-      </Wrapper>
-    </>
+      </PresentationalBit>
+    </Wrapper>
   );
 };
 
-const NativeSelectWrapper = styled.select`
-  appearance: none;
-  background-color: transparent;
-  border: none;
-  margin: 0;
-  height: 100%;
+const Wrapper = styled.div`
+  position: relative;
+  width: max-content;
+`;
+
+const NativeSelect = styled.select`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  font-family: inherit;
-  font-size: inherit;
-  cursor: inherit;
-  line-height: inherit;
-  outline: none;
+  height: 100%;
+  opacity: 0;
+  /* Allow the select to span the full height in Safari */
+  -webkit-appearance: none;
+`;
+
+const PresentationalBit = styled.div`
   color: ${COLORS.gray700};
+  background-color: ${COLORS.transparentGray15};
+  font-size: ${16 / 16}rem;
+  padding: 12px 16px;
+  padding-right: 52px;
+  border-radius: 8px;
+
+  ${NativeSelect}:focus + & {
+    outline: 1px dotted #212121;
+    outline: 5px auto -webkit-focus-ring-color;
+  }
+
+  ${NativeSelect}:hover + & {
+    color: ${COLORS.black};
+  }
 `;
 
 const IconWrapper = styled.div`
   position: absolute;
+  top: 0;
+  bottom: 0;
   right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: ${COLORS.gray700};
-`;
-
-const Wrapper = styled.div`
-  width: ${({ displayedValue }) => displayedValue.length * 8 + 64}px;
-  border-radius: 8px;
-  padding: 12px 32px 12px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-  line-height: 1.1;
-  background-color: ${COLORS.transparentGray15};
-  position: relative;
-
-  &:hover select,
-  &:hover div {
-    color: ${COLORS.black};
-  }
-
-  &:focus-within {
-    outline: 2px solid ${COLORS.primary};
-  }
+  margin: auto;
+  width: var(--size);
+  height: var(--size);
+  pointer-events: none;
 `;
 
 export default Select;
