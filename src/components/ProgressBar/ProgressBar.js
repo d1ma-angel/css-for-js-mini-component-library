@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { COLORS } from '../../constants';
 import VisuallyHidden from '../VisuallyHidden';
@@ -13,28 +13,26 @@ const ProgressBar = ({ value, size }) => {
   }
 
   return (
-    <>
-      <Wrapper
-        role="progressbar"
-        aria-valuenow={value}
-        aria-valuemin="0"
-        aria-valuemax="100"
-        style={{
-          '--padding': style.padding + 'px',
-          '--border-radius': style.radius + 'px',
-        }}
-      >
-        <VisuallyHidden>{value}%</VisuallyHidden>
-        <BarWrapper>
-          <Bar
-            style={{
-              '--width': value + '%',
-              '--height': style.height + 'px',
-            }}
-          />
-        </BarWrapper>
-      </Wrapper>
-    </>
+    <Wrapper
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin="0"
+      aria-valuemax="100"
+      style={{
+        '--padding': style.padding + 'px',
+        '--border-radius': style.radius + 'px',
+      }}
+    >
+      <VisuallyHidden>{value}%</VisuallyHidden>
+      <BarWrapper>
+        <Bar
+          style={{
+            '--width': value + '%',
+            '--height': style.height + 'px',
+          }}
+        />
+      </BarWrapper>
+    </Wrapper>
   );
 };
 
